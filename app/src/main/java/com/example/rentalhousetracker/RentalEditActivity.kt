@@ -31,7 +31,7 @@ class RentalEditActivity : AppCompatActivity() {
         db = RentalDatabase.getDatabase(this)
 
         // Check if editing an existing rental
-        rentalToEdit = intent.getSerializableExtra("rental") as? Rental
+        rentalToEdit = intent.getParcelableExtra("rental")
         rentalToEdit?.let {
             titleInput.setText(it.title)
             locationInput.setText(it.location)
@@ -43,18 +43,17 @@ class RentalEditActivity : AppCompatActivity() {
             val title = titleInput.text.toString()
             val location = locationInput.text.toString()
             val price = priceInput.text.toString()
-            val imageUrl = imageUrlInput.text.toString() // <--- you were missing this
+            val imageUrl = imageUrlInput.text.toString()
 
             if (rentalToEdit == null) {
-                // Create
+                // Create new rental
                 db.rentalDao().insert(Rental(title = title, location = location, price = price, imageUrl = imageUrl))
             } else {
-                // Update
-                val updated = rentalToEdit!!.copy(title = title, location = location, price = price, imageUrl = imageUrl)
-                db.rentalDao().update(updated)
+                // Update existing rental
+                val updatedRental = rentalToEdit!!.copy(title = title, location = location, price = price, imageUrl = imageUrl)
+                db.rentalDao().update(updatedRental)
             }
-            finish()
+            finish() // close activity
         }
-
     }
 }
